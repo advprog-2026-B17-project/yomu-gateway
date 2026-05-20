@@ -21,6 +21,9 @@ public class RouteConfig {
                 .route("notifications-service", r -> r
                         .path("/api/notifications/**")
                         .uri(gamificationEngineUrl))
+                .route("gamification-service", r -> r
+                        .path("/api/achievements/**", "/api/missions/**", "/api/clans/**", "/api/notifications/**")
+                        .uri(gamificationEngineUrl))
                 .route("core-api", r -> r
                         .path("/api/**")
                         .uri(coreApiUrl))
