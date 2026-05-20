@@ -12,12 +12,18 @@ public class RouteConfig {
     @Value("${CORE_API_URL:http://localhost:8080}")
     private String coreApiUrl;
 
+    @Value("${GAMIFICATION_ENGINE_URL:http://localhost:8081}")
+    private String gamificationEngineUrl;
+
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("auth-service", r -> r
                         .path("/api/auth/**")
                         .uri(coreApiUrl))
+                .route("gamification-service", r -> r
+                        .path("/api/achievements/**", "/api/missions/**", "/api/clans/**", "/api/notifications/**")
+                        .uri(gamificationEngineUrl))
                 .route("core-api", r -> r
                         .path("/api/**")
                         .uri(coreApiUrl))
