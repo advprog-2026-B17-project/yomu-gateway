@@ -9,6 +9,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -20,6 +21,7 @@ import java.util.List;
 public class JwtAuthenticationFilter implements GlobalFilter {
 
     private static final List<String> PUBLIC_PATHS = List.of(
+            "/actuator",
             "/api/auth/register",
             "/api/auth/login",
             "/api/auth/google"
@@ -27,6 +29,9 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
+
+    @Value("${GATEWAY_SHARED_SECRET:}")
+    private String gatewaySharedSecret;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -36,11 +41,11 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
         // Handle CORS preflight immediately
         if ("OPTIONS".equals(method)) {
-            return chain.filter(exchange);
+            return chain.filter(exchange.mutate().request(withTrustedHeaders(request, null, null, null)).build());
         }
 
         if (isPublicPath(path)) {
-            return chain.filter(exchange);
+            return chain.filter(exchange.mutate().request(withTrustedHeaders(request, null, null, null)).build());
         }
 
         String authHeader = request.getHeaders().getFirst("Authorization");
@@ -63,11 +68,12 @@ public class JwtAuthenticationFilter implements GlobalFilter {
             String role = claims.get("role", String.class);
             String username = claims.get("username", String.class);
 
-            ServerHttpRequest mutatedRequest = request.mutate()
-                    .header("X-User-Id", userId)
-                    .header("X-User-Role", role != null ? role : "student")
-                    .header("X-Username", username != null ? username : "")
-                    .build();
+            ServerHttpRequest mutatedRequest = withTrustedHeaders(
+                    request,
+                    userId,
+                    role != null ? role : "student",
+                    username != null ? username : ""
+            );
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
         } catch (Exception e) {
@@ -78,5 +84,32 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
     private boolean isPublicPath(String path) {
         return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+    }
+
+    private ServerHttpRequest withTrustedHeaders(ServerHttpRequest request,
+                                                 String userId,
+                                                 String role,
+                                                 String username) {
+        return request.mutate()
+                .headers(headers -> {
+                    headers.remove("X-User-Id");
+                    headers.remove("X-User-Role");
+                    headers.remove("X-Username");
+                    headers.remove("X-Gateway-Secret");
+
+                    if (StringUtils.hasText(userId)) {
+                        headers.set("X-User-Id", userId);
+                    }
+                    if (StringUtils.hasText(role)) {
+                        headers.set("X-User-Role", role);
+                    }
+                    if (username != null) {
+                        headers.set("X-Username", username);
+                    }
+                    if (StringUtils.hasText(gatewaySharedSecret)) {
+                        headers.set("X-Gateway-Secret", gatewaySharedSecret);
+                    }
+                })
+                .build();
     }
 }

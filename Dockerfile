@@ -12,5 +12,5 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 10000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD wget -q --spider http://localhost:10000/actuator/health || exit 1
+  CMD wget -q --spider "http://localhost:${PORT:-10000}/actuator/health" || exit 1
 ENTRYPOINT ["java", "-Xmx256m", "-Xms128m", "-jar", "app.jar"]

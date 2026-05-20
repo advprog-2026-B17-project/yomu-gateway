@@ -4,21 +4,6 @@ server:
 spring:
   application:
     name: yomu-gateway
-  cloud:
-    gateway:
-      routes:
-        - id: auth-service
-          uri: ${CORE_API_URL:http://localhost:8080}
-          predicates:
-            - Path=/api/auth/**
-        - id: gamification-service
-          uri: ${GAMIFICATION_ENGINE_URL:http://localhost:8081}
-          predicates:
-            - Path=/api/achievements/**,/api/missions/**,/api/clans/**,/api/notifications/**
-        - id: core-api
-          uri: ${CORE_API_URL:http://localhost:8080}
-          predicates:
-            - Path=/api/**
 
 management:
   endpoints:
