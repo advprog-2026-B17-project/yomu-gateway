@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: yomu-gateway
+    env: docker
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: JAVA_OPTS
+        value: "-Xmx256m"
+      - key: JWT_SECRET
+        sync: false
+      - key: CLOUDAMQP_URL
+        sync: false
+      - key: CORE_API_URL
+        value: https://yomu-core-api.onrender.com
+      - key: YOMU_WEB_URL
+        value: https://yomu-web.onrender.com
