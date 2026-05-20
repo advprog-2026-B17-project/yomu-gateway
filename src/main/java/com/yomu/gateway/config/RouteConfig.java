@@ -5,6 +5,7 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class RouteConfig {
@@ -21,8 +22,20 @@ public class RouteConfig {
                 .route("notifications-service", r -> r
                         .path("/api/notifications/**")
                         .uri(gamificationEngineUrl))
-                .route("gamification-service", r -> r
-                        .path("/api/achievements/**", "/api/missions/**", "/api/clans/**", "/api/notifications/**")
+                .route("achievements-read-service", r -> r
+                        .method(HttpMethod.GET)
+                        .and()
+                        .path("/api/achievements/**")
+                        .uri(gamificationEngineUrl))
+                .route("missions-read-service", r -> r
+                        .method(HttpMethod.GET)
+                        .and()
+                        .path("/api/missions/*")
+                        .uri(gamificationEngineUrl))
+                .route("clans-read-service", r -> r
+                        .method(HttpMethod.GET)
+                        .and()
+                        .path("/api/clans", "/api/clans/me", "/api/clans/leaderboard", "/api/clans/*/leaderboard")
                         .uri(gamificationEngineUrl))
                 .route("core-api", r -> r
                         .path("/api/**")

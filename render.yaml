@@ -15,4 +15,4 @@ services:
       - key: GAMIFICATION_ENGINE_URL
         value: https://yomu-gamification-engine.onrender.com
       - key: YOMU_WEB_URL
-        value: https://yomu-web.onrender.com
+        sync: false
