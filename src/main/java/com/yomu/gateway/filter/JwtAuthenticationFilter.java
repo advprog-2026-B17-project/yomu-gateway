@@ -83,7 +83,8 @@ public class JwtAuthenticationFilter implements GlobalFilter {
     }
 
     private boolean isPublicPath(String path) {
-        return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+        return PUBLIC_PATHS.stream()
+                .anyMatch(publicPath -> path.equals(publicPath) || path.startsWith(publicPath + "/"));
     }
 
     private ServerHttpRequest withTrustedHeaders(ServerHttpRequest request,
