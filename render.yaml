@@ -12,7 +12,7 @@ services:
         sync: false
       - key: CORE_API_URL
         value: https://yomu-core-api.onrender.com
-      - key: GAMIFICATION_ENGINE_URL
-        value: https://yomu-gamification-engine.onrender.com
+      - key: GAMIFICATION_API_URL
+        value: https://yomu-gamification-api.onrender.com
       - key: YOMU_WEB_URL
         sync: false
