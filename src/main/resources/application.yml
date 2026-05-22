@@ -9,16 +9,18 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus
   endpoint:
     health:
       show-details: when_authorized
 
 app:
   cors:
-    allowed-origins: ${YOMU_WEB_URL:http://localhost:3000,https://yomu-web-nine.vercel.app/}
+    allowed-origins: ${YOMU_WEB_URL:http://localhost:3000,https://yomu-web-nine.vercel.app}
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:yomu-dev-secret-key-change-in-production-min32chars}
+  gateway:
+    shared-secret: ${GATEWAY_SHARED_SECRET:yomu-dev-gateway-secret-change-in-production}
   rate-limit:
     login-attempts: 5
     login-window-minutes: 15
