@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
-    @Value("${GATEWAY_SHARED_SECRET:}")
+    @Value("${app.gateway.shared-secret}")
     private String gatewaySharedSecret;
 
     @Override
