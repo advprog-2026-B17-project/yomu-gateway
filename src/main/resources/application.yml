@@ -16,6 +16,9 @@ management:
 
 app:
   cors:
-    allowed-origins: ${YOMU_WEB_URL:http://localhost:3000,https://yomu-*.vercel.app,https://*.vercel.app}
+    allowed-origins: ${YOMU_WEB_URL:http://localhost:3000,https://yomu-web-nine.vercel.app/}
   jwt:
     secret: ${JWT_SECRET}
+  rate-limit:
+    login-attempts: 5
+    login-window-minutes: 15
