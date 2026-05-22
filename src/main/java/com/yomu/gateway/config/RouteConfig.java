@@ -13,35 +13,19 @@ public class RouteConfig {
     @Value("${CORE_API_URL:http://localhost:8080}")
     private String coreApiUrl;
 
-    @Value("${GAMIFICATION_ENGINE_URL:http://localhost:8081}")
-    private String gamificationEngineUrl;
+    @Value("${GAMIFICATION_API_URL:http://localhost:8081}")
+    private String gamificationApiUrl;
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("notifications-service", r -> r
-                        .path("/api/notifications/**")
-                        .uri(gamificationEngineUrl))
-                .route("achievements-read-service", r -> r
-                        .method(HttpMethod.GET)
-                        .and()
-                        .path("/api/achievements/**")
-                        .uri(gamificationEngineUrl))
-                .route("missions-read-service", r -> r
-                        .method(HttpMethod.GET)
-                        .and()
-                        .path("/api/missions/*")
-                        .uri(gamificationEngineUrl))
-                .route("clans-read-service", r -> r
-                        .method(HttpMethod.GET)
-                        .and()
-                        .path("/api/clans", "/api/clans/me", "/api/clans/leaderboard", "/api/clans/*/leaderboard")
-                        .uri(gamificationEngineUrl))
+                .route("gamification-api", r -> r
+                        .path("/api/gamification/**", "/api/notifications/**", "/api/achievements/**",
+                              "/api/missions/**", "/api/clans/**",
+                              "/api/admin/achievements/**", "/api/admin/missions/**", "/api/admin/seasons/**")
+                        .uri(gamificationApiUrl))
                 .route("core-api", r -> r
                         .path("/api/**")
-                        .uri(coreApiUrl))
-                .route("admin-api", r -> r
-                        .path("/admin/**")
                         .uri(coreApiUrl))
                 .build();
     }
